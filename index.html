@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Princess Ruchu & Layyuu 👑</title>
+  <style>
+    body {
+      text-align: center;
+      font-family: 'Comic Sans MS', cursive;
+      background: url("princess.jpg") no-repeat center center fixed;
+      background-size: cover;
+      margin: 0;
+      overflow: hidden;
+    }
+
+    /* pink overlay */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 192, 203, 0.4);
+      z-index: -1;
+    }
+
+    h1 {
+      color: #ff1493;
+      margin-top: 30px;
+    }
+
+    button {
+      padding: 15px 30px;
+      margin: 20px;
+      font-size: 20px;
+      border-radius: 15px;
+      border: none;
+      cursor: pointer;
+      background: pink;
+    }
+
+    .star {
+      font-size: 40px;
+      cursor: pointer;
+      display: inline-block;
+      margin: 15px;
+    }
+
+    #gameArea {
+      display: none;
+    }
+
+    #message {
+      font-size: 24px;
+      margin-top: 20px;
+      color: purple;
+      font-weight: bold;
+    }
+
+    .glitter {
+      position: absolute;
+      font-size: 20px;
+      animation: fall 5s linear infinite;
+    }
+
+    @keyframes fall {
+      from { transform: translateY(-10vh); opacity: 1; }
+      to { transform: translateY(100vh); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Music -->
+<audio id="bgMusic" loop>
+  <source src="https://www.bensound.com/bensound-music/bensound-love.mp3" type="audio/mpeg">
+</audio>
+
+<h1>👑 Choose Your Princess 👑</h1>
+
+<div id="chooseArea">
+  <button onclick="startGame('Ruchu')">Princess Ruchu 👑</button>
+  <button onclick="startGame('Layyuu')">Princess Layyuu 👑</button>
+</div>
+
+<div id="gameArea">
+  <h2 id="gameTitle"></h2>
+  <p>Click all the magic stars ✨</p>
+  <div>
+    <span class="star" onclick="collectStar(this)">⭐</span>
+    <span class="star" onclick="collectStar(this)">⭐</span>
+    <span class="star" onclick="collectStar(this)">⭐</span>
+    <span class="star" onclick="collectStar(this)">⭐</span>
+    <span class="star" onclick="collectStar(this)">⭐</span>
+  </div>
+  <p id="message"></p>
+</div>
+
+<script>
+let count = 0;
+let currentPrincess = "";
+
+// Start glitter effect
+setInterval(() => {
+  let sparkle = document.createElement("div");
+  sparkle.innerHTML = "✨";
+  sparkle.className = "glitter";
+  sparkle.style.left = Math.random() * window.innerWidth + "px";
+  sparkle.style.fontSize = (Math.random() * 15 + 10) + "px";
+  document.body.appendChild(sparkle);
+  setTimeout(() => sparkle.remove(), 5000);
+}, 300);
+
+function startGame(name) {
+  currentPrincess = name;
+  document.getElementById("chooseArea").style.display = "none";
+  document.getElementById("gameArea").style.display = "block";
+  document.getElementById("gameTitle").innerHTML =
+    "👑 Welcome Princess " + name + " 👑";
+
+  // Play music after click
+  document.getElementById("bgMusic").play();
+}
+
+function collectStar(star) {
+  star.style.visibility = "hidden";
+  count++;
+
+  if (count === 5) {
+    document.getElementById("message").innerHTML =
+      "🎉 Yay! Princess " + currentPrincess +
+      " is magical! 💖✨ I love you both Ruchu & Layyuu soooo much! 👑💕";
+  }
+}
+</script>
+
+</body>
+</html>
