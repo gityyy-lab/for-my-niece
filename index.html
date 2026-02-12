@@ -1,77 +1,84 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Princess Ruchu & Layyuu 👑</title>
-  <style>
-    body {
-      text-align: center;
-      font-family: 'Comic Sans MS', cursive;
-      background: url("princess.jpg") no-repeat center center fixed;
-      background-size: cover;
-      margin: 0;
-      overflow: hidden;
-    }
+<title>Royal Princess Magic 👑</title>
 
-    /* pink overlay */
-    body::before {
-      content: "";
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(255, 192, 203, 0.4);
-      z-index: -1;
-    }
+<style>
+body{
+  margin:0;
+  overflow:hidden;
+  text-align:center;
+  font-family:'Comic Sans MS',cursive;
+  background:url("princess.jpg") no-repeat center center fixed;
+  background-size:cover;
+}
 
-    h1 {
-      color: #ff1493;
-      margin-top: 30px;
-    }
+/* soft pink overlay */
+body::before{
+  content:"";
+  position:fixed;
+  width:100%;
+  height:100%;
+  background:rgba(255,192,203,0.35);
+  z-index:-1;
+}
 
-    button {
-      padding: 15px 30px;
-      margin: 20px;
-      font-size: 20px;
-      border-radius: 15px;
-      border: none;
-      cursor: pointer;
-      background: pink;
-    }
+h1{color:#ff1493;margin-top:20px;}
 
-    .star {
-      font-size: 40px;
-      cursor: pointer;
-      display: inline-block;
-      margin: 15px;
-    }
+button{
+  padding:15px 30px;
+  margin:20px;
+  font-size:20px;
+  border-radius:15px;
+  border:none;
+  cursor:pointer;
+  background:pink;
+}
 
-    #gameArea {
-      display: none;
-    }
+#gameArea{display:none;}
+#score{font-size:22px;color:purple;font-weight:bold;}
+#message{
+  font-size:26px;
+  color:purple;
+  font-weight:bold;
+  margin-top:20px;
+  text-shadow:0 0 10px white;
+}
 
-    #message {
-      font-size: 24px;
-      margin-top: 20px;
-      color: purple;
-      font-weight: bold;
-    }
+.fall{
+  position:absolute;
+  font-size:40px;
+  cursor:pointer;
+  animation:fall linear;
+}
 
-    .glitter {
-      position: absolute;
-      font-size: 20px;
-      animation: fall 5s linear infinite;
-    }
+@keyframes fall{
+  from{transform:translateY(-10vh);}
+  to{transform:translateY(100vh);}
+}
 
-    @keyframes fall {
-      from { transform: translateY(-10vh); opacity: 1; }
-      to { transform: translateY(100vh); opacity: 0; }
-    }
-  </style>
+/* glitter */
+.glitter{
+  position:absolute;
+  font-size:18px;
+  animation:glitterFall linear forwards;
+}
+
+@keyframes glitterFall{
+  from{transform:translateY(-10vh); opacity:1;}
+  to{transform:translateY(100vh); opacity:0;}
+}
+
+.bigHeart{
+  position:absolute;
+  font-size:80px;
+  cursor:pointer;
+}
+</style>
 </head>
+
 <body>
 
-<!-- Music -->
 <audio id="bgMusic" loop>
   <source src="https://www.bensound.com/bensound-music/bensound-love.mp3" type="audio/mpeg">
 </audio>
@@ -79,59 +86,144 @@
 <h1>👑 Choose Your Princess 👑</h1>
 
 <div id="chooseArea">
-  <button onclick="startGame('Ruchu')">Princess Ruchu 👑</button>
-  <button onclick="startGame('Layyuu')">Princess Layyuu 👑</button>
+  <button onclick="startRuchu()">Princess Ruchu 👑</button>
+  <button onclick="startLayyuu()">Princess Layyuu 👶</button>
 </div>
 
 <div id="gameArea">
-  <h2 id="gameTitle"></h2>
-  <p>Click all the magic stars ✨</p>
-  <div>
-    <span class="star" onclick="collectStar(this)">⭐</span>
-    <span class="star" onclick="collectStar(this)">⭐</span>
-    <span class="star" onclick="collectStar(this)">⭐</span>
-    <span class="star" onclick="collectStar(this)">⭐</span>
-    <span class="star" onclick="collectStar(this)">⭐</span>
-  </div>
+  <p id="score"></p>
   <p id="message"></p>
 </div>
 
 <script>
-let count = 0;
-let currentPrincess = "";
 
-// Start glitter effect
-setInterval(() => {
-  let sparkle = document.createElement("div");
-  sparkle.innerHTML = "✨";
-  sparkle.className = "glitter";
-  sparkle.style.left = Math.random() * window.innerWidth + "px";
-  sparkle.style.fontSize = (Math.random() * 15 + 10) + "px";
+let score=0;
+let currentGame="";
+let musicStarted=false;
+
+/* Start music on first interaction */
+document.body.addEventListener("click", function(){
+  if(!musicStarted){
+    document.getElementById("bgMusic").play();
+    musicStarted=true;
+  }
+});
+
+/* Continuous glitter */
+setInterval(()=>{
+  let sparkle=document.createElement("div");
+  sparkle.innerHTML="✨";
+  sparkle.className="glitter";
+  sparkle.style.left=Math.random()*window.innerWidth+"px";
+  sparkle.style.animationDuration=(Math.random()*3+2)+"s";
+  sparkle.style.fontSize=(Math.random()*10+10)+"px";
   document.body.appendChild(sparkle);
-  setTimeout(() => sparkle.remove(), 5000);
-}, 300);
+  setTimeout(()=>sparkle.remove(),5000);
+},300);
 
-function startGame(name) {
-  currentPrincess = name;
-  document.getElementById("chooseArea").style.display = "none";
-  document.getElementById("gameArea").style.display = "block";
-  document.getElementById("gameTitle").innerHTML =
-    "👑 Welcome Princess " + name + " 👑";
-
-  // Play music after click
-  document.getElementById("bgMusic").play();
+function startRuchu(){
+  currentGame="ruchu";
+  score=0;
+  document.getElementById("chooseArea").style.display="none";
+  document.getElementById("gameArea").style.display="block";
+  document.getElementById("score").innerHTML="Unicorns Caught: 0";
+  startUnicornGame();
 }
 
-function collectStar(star) {
-  star.style.visibility = "hidden";
-  count++;
+function startLayyuu(){
+  currentGame="layyuu";
+  document.getElementById("chooseArea").style.display="none";
+  document.getElementById("gameArea").style.display="block";
+  document.getElementById("score").innerHTML="";
+  startToddlerGame();
+}
 
-  if (count === 5) {
-    document.getElementById("message").innerHTML =
-      "🎉 Yay! Princess " + currentPrincess +
-      " is magical! 💖✨ I love you both Ruchu & Layyuu soooo much! 👑💕";
+/* ---------- RUCHU GAME ---------- */
+function startUnicornGame(){
+  let unicornInterval=setInterval(()=>{
+    if(currentGame!=="ruchu") return;
+
+    let item=document.createElement("div");
+    item.innerHTML="🦄";
+    item.className="fall";
+    item.style.left=Math.random()*window.innerWidth+"px";
+    item.style.animationDuration=(Math.random()*3+3)+"s";
+
+    item.onclick=function(){
+      score++;
+      document.getElementById("score").innerHTML="Unicorns Caught: "+score;
+      item.remove();
+
+      if(score===10){
+        document.getElementById("message").innerHTML=
+        "🎉 WOW Ruchu! You are a Super Princess! 👑✨<br><br>💖 I LOVE YOUUU RUCHU!!! 💖";
+        magicalBurst();
+        heartRain();
+        clearInterval(unicornInterval);
+      }
+    };
+
+    document.body.appendChild(item);
+    setTimeout(()=>item.remove(),6000);
+
+  },1000);
+}
+
+/* ---------- LAYYUU GAME ---------- */
+function startToddlerGame(){
+  setInterval(()=>{
+    if(currentGame!=="layyuu") return;
+
+    let heart=document.createElement("div");
+    heart.innerHTML="💖";
+    heart.className="bigHeart";
+    heart.style.left=Math.random()*(window.innerWidth-100)+"px";
+    heart.style.top=Math.random()*(window.innerHeight-100)+"px";
+
+    heart.onclick=function(){
+      heart.innerHTML="✨";
+      setTimeout(()=>heart.remove(),500);
+
+      document.getElementById("message").innerHTML=
+      "Yayyy Layyuu! Good job Princess! 👶👑💕<br><br>💖 I LOVE YOUUU LAYYUU!!! 💖";
+      magicalBurst();
+      heartRain();
+    };
+
+    document.body.appendChild(heart);
+    setTimeout(()=>heart.remove(),4000);
+
+  },1500);
+}
+
+/* Extra sparkle burst */
+function magicalBurst(){
+  for(let i=0;i<30;i++){
+    let burst=document.createElement("div");
+    burst.innerHTML="✨";
+    burst.className="glitter";
+    burst.style.left=Math.random()*window.innerWidth+"px";
+    burst.style.animationDuration="2s";
+    burst.style.fontSize="20px";
+    document.body.appendChild(burst);
+    setTimeout(()=>burst.remove(),2000);
   }
 }
+
+/* Heart rain */
+function heartRain(){
+  for(let i=0;i<40;i++){
+    let heart=document.createElement("div");
+    heart.innerHTML="💖";
+    heart.className="glitter";
+    heart.style.left=Math.random()*window.innerWidth+"px";
+    heart.style.animationDuration="3s";
+    heart.style.fontSize="25px";
+    document.body.appendChild(heart);
+    setTimeout(()=>heart.remove(),3000);
+  }
+}
+
 </script>
 
 </body>
